@@ -1,7 +1,6 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const fish = require('./fish');
-const bugs = require('./bugs');
-const sea = require('./sea');
+const request = require('./services/requests');
+
 require('dotenv').config();
 
 const client = new Client({
@@ -27,13 +26,13 @@ client.on('messageCreate', async (message) => {
 	args = args.join('_');
 
 	if (command === 'f' || command === 'fish') {
-		fish.getFish(args, message);
+		request.getAnimal('fish', args, message);
 	}
 	else if (command === 'b' || command === 'bug') {
-		bugs.getBug(args, message);
+		request.getAnimal('bugs', args, message);
 	}
 	else if (command === 's' || command === 'sea') {
-		sea.getSeaCreature(args, message);
+		request.getAnimal('sea', args, message);
 	}
 });
 
