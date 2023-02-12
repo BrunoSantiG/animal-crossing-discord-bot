@@ -13,6 +13,7 @@ const client = new Client({
 
 const PREFIX = '-';
 const COMMANDS = ['i', 'info'];
+const TYPES = ['fish', 'bugs', 'sea'];
 
 client.on('ready', () => {
 	console.log('Bot online!');
@@ -28,11 +29,9 @@ client.on('messageCreate', async (message) => {
 	args = args.join('_');
 
 	if (COMMANDS.includes(command)) {
-		Promise.any([
-			request.getAnimal('fish', args),
-			request.getAnimal('bugs', args),
-			request.getAnimal('sea', args),
-		]).then((res) => {
+		Promise.any(
+			TYPES.map((type) => request.getAnimal(type, args)),
+		).then((res) => {
 			const animal = res.data;
 			message.reply(`O ${animal.name['name-USen']} é vendido por ${animal.price} Bells!`);
 		}).catch(() => {
