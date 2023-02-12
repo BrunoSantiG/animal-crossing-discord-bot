@@ -11,28 +11,33 @@ const client = new Client({
 	],
 });
 
-const prefix = '-';
+const PREFIX = '-';
+const COMMANDS = ['i', 'info'];
+
 client.on('ready', () => {
 	console.log('Bot online!');
 });
 
 
 client.on('messageCreate', async (message) => {
-	if (message.author.bot || !message.content.startsWith(prefix)) return;
+	if (message.author.bot || !message.content.startsWith(PREFIX)) return;
 
-	const commandBody = message.content.slice(prefix.length);
+	const commandBody = message.content.slice(PREFIX.length);
 	let args = commandBody.split(' ');
 	const command = args.shift().toLowerCase();
 	args = args.join('_');
 
-	if (command === 'f' || command === 'fish') {
-		request.getAnimal('fish', args, message);
-	}
-	else if (command === 'b' || command === 'bug') {
-		request.getAnimal('bugs', args, message);
-	}
-	else if (command === 's' || command === 'sea') {
-		request.getAnimal('sea', args, message);
+	if (COMMANDS.includes(command)) {
+		Promise.any([
+			request.getAnimal('fish', args),
+			request.getAnimal('bugs', args),
+			request.getAnimal('sea', args),
+		]).then((res) => {
+			const animal = res.data;
+			message.reply(`O ${animal.name['name-USen']} é vendido por ${animal.price} Bells!`);
+		}).catch(() => {
+			message.reply('Não existe nenhum peixe, inseto ou criatura marinha com esse nome');
+		});
 	}
 });
 
